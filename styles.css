@@ -34,12 +34,12 @@ dialog { width:min(100% - 22px,720px); max-height:min(90dvh,760px); border:0; bo
 .chart-card { height:275px; }
 .text-button { text-transform:capitalize; }
 .shell { display:flex; flex-direction:column; }
-.chart-section { order:2; }
+.chart-section { order:2; margin-top:31px; }
 .weight-section { order:3; }
-.weekly-note { order:4; }
+.weekly-note { order:6; }
 .workout-section { order:5; }
-.overview-grid { order:6; grid-template-columns:repeat(2,1fr); margin:29px 0 12px; }
-.pep-talk { order:7; }
+.overview-grid { order:7; grid-template-columns:repeat(2,1fr); margin:29px 0 12px; }
+.pep-talk { order:4; }
 .weight-card { display:none; }
 .weight-section { margin-top:29px; }
 .weight-value { margin:0; color:#3b805a; font-size:.75rem; font-weight:800; }

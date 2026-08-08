@@ -15,16 +15,18 @@ function chartOptions(expanded = false) {
 function makeChart(canvas, entries, dailyTarget, expanded) {
   const datasets = [{ label: "Intake", data: entries.map(entry => window.isCalorieLogged(entry) ? window.entryTotal(entry) : null), borderColor: "#eb789b", backgroundColor: "rgba(235,120,155,.16)", fill: true, spanGaps: true, borderWidth: 3, pointRadius: expanded ? 4 : 3, pointBackgroundColor: "#fff8f5", pointBorderWidth: 2, tension: .38 }];
   if (dailyTarget) datasets.push({ label: "Daily target", data: entries.map(() => dailyTarget), borderColor: "#a28bce", borderWidth: 1.5, borderDash: [5, 5], pointRadius: 0 });
-  if (entries.some(entry => typeof entry.maintenance === "number")) datasets.push({ label: "Maintenance", data: entries.map(entry => entry.maintenance), borderColor: "#d5af55", borderWidth: 1.5, borderDash: [3, 6], pointRadius: 0 });
+  const maintenance = entries.find(entry => typeof entry.maintenance === "number")?.maintenance;
+  if (maintenance !== undefined) datasets.push({ label: "Maintenance", data: entries.map(() => maintenance), borderColor: "#d5af55", borderWidth: 1.5, borderDash: [3, 6], pointRadius: 0 });
   return new Chart(canvas, { type: "line", data: { labels: entries.map(entry => dayName(entry.date)), datasets }, options: chartOptions(expanded) });
 }
 
 function makeWeightChart(canvas, entries) {
-  const weights = entries.map(entry => typeof entry.weight === "number" ? entry.weight : null);
+  const weeks = window.availableWeekKeys(entries).sort();
+  const weights = weeks.map(start => [...entries].reverse().find(entry => window.weekKey(window.dateAtNoon(entry.date)) === start && typeof entry.weight === "number")?.weight ?? null);
   const recorded = weights.filter(value => value !== null);
   const lowest = recorded.length ? Math.floor(Math.min(...recorded) - .5) : 0;
   const highest = recorded.length ? Math.ceil(Math.max(...recorded) + .5) : 1;
-  return new Chart(canvas, { type: "line", data: { labels: entries.map(entry => dayName(entry.date)), datasets: [{ label: "Weight", data: weights, borderColor: "#4eaa79", backgroundColor: "rgba(78,170,121,.14)", fill: true, spanGaps: true, borderWidth: 3, pointRadius: 3, pointBackgroundColor: "#fffdfc", pointBorderWidth: 2, tension: .35 }] }, options: { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false, callbacks: { label: context => context.raw === null ? "Not logged" : `${context.raw} kg` } } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: 11, weight: "600" } } }, y: { suggestedMin: lowest, suggestedMax: highest, grid: { color: "#e3eee6" }, border: { display: false }, ticks: { color: "#718679", callback: value => `${value} kg` } } } } });
+  return new Chart(canvas, { type: "line", data: { labels: weeks.map(weekLabel), datasets: [{ label: "Weekly Weight", data: weights, borderColor: "#4eaa79", backgroundColor: "rgba(78,170,121,.14)", fill: true, spanGaps: true, borderWidth: 3, pointRadius: 3, pointBackgroundColor: "#fffdfc", pointBorderWidth: 2, tension: .35 }] }, options: { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false, callbacks: { label: context => context.raw === null ? "Not logged" : `${context.raw} kg` } } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: 11, weight: "600" } } }, y: { suggestedMin: lowest, suggestedMax: highest, grid: { color: "#e3eee6" }, border: { display: false }, ticks: { color: "#718679", callback: value => `${value} kg` } } } } });
 }
 
 function monthDatesForWeek(selectedWeek) {
@@ -95,7 +97,7 @@ function populate(entries, allEntries, dailyTarget, selectedWeek, settings) {
   $("#daily-summary").innerHTML = entries.map(entry => `<tr><th scope="row">${dayName(entry.date)}</th><td>${window.isCalorieLogged(entry) ? `${format(window.entryTotal(entry))} kcal` : "Not logged"}</td><td>${dailyTarget ? `${format(dailyTarget)} kcal` : "Not set"}</td></tr>`).join("");
   compactChart?.destroy(); fullChart?.destroy();
   compactChart = makeChart($("#weekly-chart"), entries, dailyTarget, false); fullChart = makeChart($("#expanded-chart"), entries, dailyTarget, true);
-  weightChart?.destroy(); weightChart = makeWeightChart($("#weight-chart"), entries);
+  weightChart?.destroy(); weightChart = makeWeightChart($("#weight-chart"), allEntries);
   renderWorkoutCalendar(allEntries, selectedWeek);
 }
 
