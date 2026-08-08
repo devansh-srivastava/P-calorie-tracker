@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff8f5" />
+    <meta name="description" content="A gentle weekly calorie tracker." />
+    <title>Girl Code | Calorie Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" defer></script>
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="wordmark" href="index.html" aria-label="Girl Code dashboard">girl code<span>✦</span></a>
+        <button class="week-switcher" type="button" aria-label="Choose week">
+          <span>WEEK OF</span><strong id="week-label">08 Aug</strong><b aria-hidden="true">⌄</b>
+        </button>
+      </header>
+
+      <section class="hero card reveal" aria-labelledby="weekly-heading">
+        <div class="hero-copy">
+          <p class="eyebrow">YOUR WEEK, SO FAR</p>
+          <h1 id="weekly-heading"><span id="weekly-total">0</span> <small>kcal</small></h1>
+          <p class="status-line" id="weekly-status">Loading your gentle little overview…</p>
+        </div>
+        <div class="status-orb" aria-hidden="true"><span>♡</span></div>
+      </section>
+
+      <section class="overview-grid" aria-label="Weekly overview">
+        <article class="metric card reveal">
+          <p>Weekly benchmark</p>
+          <strong id="benchmark-total">0</strong><span>kcal</span>
+        </article>
+        <article class="metric card reveal">
+          <p>Maintenance</p>
+          <strong id="maintenance-total">0</strong><span>kcal</span>
+        </article>
+        <article class="metric card reveal weight-card">
+          <p>Weight</p>
+          <strong id="latest-weight">—</strong><span>kg</span>
+          <em id="weight-change">No change recorded</em>
+        </article>
+      </section>
+
+      <section class="chart-section reveal" aria-labelledby="chart-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">THE WEEK IN MOTION</p><h2 id="chart-heading">Calorie flow</h2></div>
+          <button class="text-button" id="open-chart" type="button">Expand <span aria-hidden="true">↗</span></button>
+        </div>
+        <button class="chart-card card" id="chart-trigger" type="button" aria-label="Open expanded weekly calorie chart">
+          <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with benchmark and maintenance lines"></canvas>
+          <span class="chart-hint">Tap chart to explore</span>
+        </button>
+        <p class="sr-only" id="chart-summary"></p>
+      </section>
+
+      <section class="weekly-note card reveal" aria-labelledby="recap-heading">
+        <div>
+          <p class="eyebrow">WEEKLY RECAP</p>
+          <h2 id="weekly-difference">Finding your rhythm</h2>
+          <p id="recap-copy">Add your meals to see your personal weekly story.</p>
+        </div>
+        <span class="flower" aria-hidden="true">✿</span>
+      </section>
+
+      <section class="pep-talk card reveal" aria-label="Motivation">
+        <span aria-hidden="true">“</span><p>Small choices, soft strength, and one lovely day at a time.</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <a class="active" href="index.html" aria-current="page"><span aria-hidden="true">⌂</span>Dashboard</a>
+      <a href="logs.html"><span aria-hidden="true">▤</span>Logs</a>
+    </nav>
+
+    <dialog id="chart-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-topline"><div><p class="eyebrow">08–14 AUGUST</p><h2 id="dialog-title">Your calorie flow</h2></div><button id="close-chart" class="close-button" type="button" aria-label="Close chart">×</button></div>
+      <div class="dialog-chart"><canvas id="expanded-chart" role="img" aria-label="Expanded weekly calorie intake chart"></canvas></div>
+      <div class="legend" aria-label="Chart key"><span><i class="intake"></i>Intake</span><span><i class="benchmark"></i>Benchmark</span><span><i class="maintenance"></i>Maintenance</span></div>
+      <div class="table-wrap"><table><caption class="sr-only">Daily calories this week</caption><thead><tr><th>Day</th><th>Intake</th><th>Benchmark</th></tr></thead><tbody id="daily-summary"></tbody></table></div>
+    </dialog>
+  </body>
+</html>
