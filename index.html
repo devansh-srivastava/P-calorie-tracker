@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff8f5" />
     <meta name="description" content="A gentle weekly calorie tracker." />
-    <title>Girl Code | Calorie Tracker</title>
+    <title>Pulkita's Calorie Tracker</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" defer></script>
     <script src="data.js" defer></script>
@@ -14,10 +14,8 @@
   <body>
     <main class="shell">
       <header class="topbar">
-        <a class="wordmark" href="index.html" aria-label="Girl Code dashboard">girl code<span>✦</span></a>
-        <button class="week-switcher" type="button" aria-label="Choose week">
-          <span>WEEK OF</span><strong id="week-label">08 Aug</strong><b aria-hidden="true">⌄</b>
-        </button>
+        <a class="wordmark" href="index.html" aria-label="Pulkita's Calorie Tracker dashboard">Pulkita's <span>tracker</span></a>
+        <label class="week-switcher"><span>WEEK OF</span><select id="week-select" aria-label="Choose week"></select></label>
       </header>
 
       <section class="hero card reveal" aria-labelledby="weekly-heading">
@@ -26,16 +24,16 @@
           <h1 id="weekly-heading"><span id="weekly-total">0</span> <small>kcal</small></h1>
           <p class="status-line" id="weekly-status">Loading your gentle little overview…</p>
         </div>
-        <div class="status-orb" aria-hidden="true"><span>♡</span></div>
+        <div class="status-orb" aria-hidden="true"><span>✿</span></div>
       </section>
 
       <section class="overview-grid" aria-label="Weekly overview">
         <article class="metric card reveal">
-          <p>Weekly benchmark</p>
+          <p>Daily target</p>
           <strong id="benchmark-total">0</strong><span>kcal</span>
         </article>
         <article class="metric card reveal">
-          <p>Maintenance</p>
+          <p>Maintenance / day</p>
           <strong id="maintenance-total">0</strong><span>kcal</span>
         </article>
         <article class="metric card reveal weight-card">
@@ -48,7 +46,7 @@
       <section class="chart-section reveal" aria-labelledby="chart-heading">
         <div class="section-heading">
           <div><p class="eyebrow">THE WEEK IN MOTION</p><h2 id="chart-heading">Calorie flow</h2></div>
-          <button class="text-button" id="open-chart" type="button">Expand <span aria-hidden="true">↗</span></button>
+          <div><button class="text-button" id="chart-help" type="button">About lines</button><button class="text-button" id="open-chart" type="button">Expand <span aria-hidden="true">↗</span></button></div>
         </div>
         <button class="chart-card card" id="chart-trigger" type="button" aria-label="Open expanded weekly calorie chart">
           <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with benchmark and maintenance lines"></canvas>
@@ -67,7 +65,7 @@
       </section>
 
       <section class="pep-talk card reveal" aria-label="Motivation">
-        <span aria-hidden="true">“</span><p>Small choices, soft strength, and one lovely day at a time.</p>
+        <span aria-hidden="true">“</span><p id="motivation-quote"></p>
       </section>
     </main>
 
@@ -82,5 +80,6 @@
       <div class="legend" aria-label="Chart key"><span><i class="intake"></i>Intake</span><span><i class="benchmark"></i>Benchmark</span><span><i class="maintenance"></i>Maintenance</span></div>
       <div class="table-wrap"><table><caption class="sr-only">Daily calories this week</caption><thead><tr><th>Day</th><th>Intake</th><th>Benchmark</th></tr></thead><tbody id="daily-summary"></tbody></table></div>
     </dialog>
+    <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-topline"><div><p class="eyebrow">A QUICK GUIDE</p><h2 id="help-title">Reading your chart</h2></div><button id="close-help" class="close-button" type="button" aria-label="Close chart guide">×</button></div><div class="help-copy"><p><b>Intake</b> is the food calories you log each day.</p><p><b>Daily target</b> is the intake goal you set in the Sheet’s Settings tab.</p><p><b>Maintenance</b> is the estimated daily intake that maintains your weight, read from your Sheet.</p></div></dialog>
   </body>
 </html>
