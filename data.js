@@ -49,7 +49,8 @@ window.parseTrackerCsv = (csv) => {
   };
   return rows.filter(row => row[col("Date")]).map(row => ({
     date: normaliseDate(row[col("Date")]), morning: number(row, "Morning Calories"), afternoon: number(row, "Afternoon Calories"),
-    evening: number(row, "Evening Calories"), total: number(row, "Total Calories"), weight: number(row, "Weight (kg)"), maintenance: number(row, "Maintenance Calories")
+    evening: number(row, "Evening Calories"), total: number(row, "Total Calories"), weight: number(row, "Weight (kg)"), maintenance: number(row, "Maintenance Calories"),
+    workout: (row[col("Worked Out?")] || "").toLowerCase() === "yes" ? true : (row[col("Worked Out?")] || "").toLowerCase() === "no" ? false : null
   }));
 };
 
@@ -68,12 +69,12 @@ window.isCalorieLogged = (entry) => [entry?.morning, entry?.afternoon, entry?.ev
 window.entryTotal = (entry) => entry?.total ?? [entry?.morning, entry?.afternoon, entry?.evening].reduce((sum, value) => sum + (typeof value === "number" ? value : 0), 0);
 window.isMeaningfulEntry = (entry) => window.isCalorieLogged(entry) || typeof entry?.weight === "number";
 window.availableWeekKeys = (entries) => [...new Set(entries.filter(entry => !window.isFutureDate(entry.date) && window.isMeaningfulEntry(entry)).map(entry => window.weekKey(window.dateAtNoon(entry.date))))].sort().reverse();
-window.entriesForWeek = (entries, start) => window.daysInWeek(start).filter(date => !window.isFutureDate(date)).map(date => entries.find(entry => entry.date === date) || { date, morning: null, afternoon: null, evening: null, total: null, weight: null, maintenance: null, empty: true });
+window.entriesForWeek = (entries, start) => window.daysInWeek(start).filter(date => !window.isFutureDate(date)).map(date => entries.find(entry => entry.date === date) || { date, morning: null, afternoon: null, evening: null, total: null, weight: null, maintenance: null, workout: null, empty: true });
 
 window.getTrackerData = async () => {
   const [trackerResponse, settingsResponse] = await Promise.all([fetch(window.TRACKER_CONFIG.trackerCsvUrl), fetch(window.TRACKER_CONFIG.settingsCsvUrl)]);
   if (!trackerResponse.ok || !settingsResponse.ok) throw new Error("Could not load the tracker.");
   const settings = window.parseSettingsCsv(await settingsResponse.text());
-  const target = Number(settings["daily calorie target"] || settings["daily target"] || 0);
-  return { entries: window.parseTrackerCsv(await trackerResponse.text()), dailyTarget: Number.isFinite(target) ? target : 0 };
+  const target = Number(settings["practical starting calorie target"] || settings["daily calorie target"] || settings["daily target"] || 0);
+  return { entries: window.parseTrackerCsv(await trackerResponse.text()), dailyTarget: Number.isFinite(target) ? target : 0, settings };
 };

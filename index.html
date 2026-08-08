@@ -28,11 +28,11 @@
       </section>
 
       <section class="overview-grid" aria-label="Weekly overview">
-        <article class="metric card reveal">
+        <article class="metric target-card card reveal">
           <p>Daily target</p>
-          <strong id="benchmark-total">0</strong><span>kcal</span>
+          <strong id="target-total">0</strong><span>kcal</span>
         </article>
-        <article class="metric card reveal">
+        <article class="metric maintenance-card card reveal">
           <p>Maintenance / day</p>
           <strong id="maintenance-total">0</strong><span>kcal</span>
         </article>
@@ -49,7 +49,7 @@
           <div><button class="text-button" id="chart-help" type="button">About lines</button><button class="text-button" id="open-chart" type="button">Expand <span aria-hidden="true">↗</span></button></div>
         </div>
         <button class="chart-card card" id="chart-trigger" type="button" aria-label="Open expanded weekly calorie chart">
-          <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with benchmark and maintenance lines"></canvas>
+          <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with daily target and maintenance lines"></canvas>
           <span class="chart-hint">Tap chart to explore</span>
         </button>
         <p class="sr-only" id="chart-summary"></p>
@@ -62,6 +62,11 @@
           <p id="recap-copy">Add your meals to see your personal weekly story.</p>
         </div>
         <span class="flower" aria-hidden="true">✿</span>
+      </section>
+
+      <section class="workout-section reveal" aria-labelledby="workout-heading">
+        <div class="section-heading"><div><p class="eyebrow">MOVE WITH YOURSELF</p><h2 id="workout-heading">Workout rhythm</h2></div><p class="workout-count" id="workout-count">No workouts logged</p></div>
+        <div class="workout-card card"><canvas id="workout-chart" role="img" aria-label="Weekly workout chart"></canvas><p id="workout-summary" class="sr-only"></p></div>
       </section>
 
       <section class="pep-talk card reveal" aria-label="Motivation">
@@ -77,8 +82,8 @@
     <dialog id="chart-dialog" aria-labelledby="dialog-title">
       <div class="dialog-topline"><div><p class="eyebrow">08–14 AUGUST</p><h2 id="dialog-title">Your calorie flow</h2></div><button id="close-chart" class="close-button" type="button" aria-label="Close chart">×</button></div>
       <div class="dialog-chart"><canvas id="expanded-chart" role="img" aria-label="Expanded weekly calorie intake chart"></canvas></div>
-      <div class="legend" aria-label="Chart key"><span><i class="intake"></i>Intake</span><span><i class="benchmark"></i>Benchmark</span><span><i class="maintenance"></i>Maintenance</span></div>
-      <div class="table-wrap"><table><caption class="sr-only">Daily calories this week</caption><thead><tr><th>Day</th><th>Intake</th><th>Benchmark</th></tr></thead><tbody id="daily-summary"></tbody></table></div>
+      <div class="legend" aria-label="Chart key"><span><i class="intake"></i>Intake</span><span><i class="target"></i>Daily target</span><span><i class="maintenance"></i>Maintenance</span></div>
+      <div class="table-wrap"><table><caption class="sr-only">Daily calories this week</caption><thead><tr><th>Day</th><th>Intake</th><th>Daily target</th></tr></thead><tbody id="daily-summary"></tbody></table></div>
     </dialog>
     <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-topline"><div><p class="eyebrow">A QUICK GUIDE</p><h2 id="help-title">Reading your chart</h2></div><button id="close-help" class="close-button" type="button" aria-label="Close chart guide">×</button></div><div class="help-copy"><p><b>Intake</b> is the food calories you log each day.</p><p><b>Daily target</b> is the intake goal you set in the Sheet’s Settings tab.</p><p><b>Maintenance</b> is the estimated daily intake that maintains your weight, read from your Sheet.</p></div></dialog>
   </body>

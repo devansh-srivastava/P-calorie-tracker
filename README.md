@@ -6,7 +6,7 @@ A mobile-first static calorie dashboard intended for GitHub Pages.
 
 The browser cannot read a private Google Sheet with the account access used during development. To let a public GitHub Pages site refresh itself, publish the `Calorie Tracker` tab as CSV from Google Sheets: **File → Share → Publish to web → Calorie Tracker → Comma-separated values (.csv)**. Paste the generated URL into `publishedCsvUrl` in `data.js`.
 
-Set `weeklyBenchmark` in `data.js` to the daily benchmark calorie value.
+The dashboard reads the practical daily target directly from the Google Sheet Settings tab.
 
 ## Publish to GitHub Pages
 
