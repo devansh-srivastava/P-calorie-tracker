@@ -14,7 +14,7 @@
   <body>
     <main class="shell">
       <header class="topbar">
-        <a class="wordmark" href="index.html" aria-label="Pulkita's Calorie Tracker dashboard">Pulkita's <span>tracker</span></a>
+        <a class="wordmark" href="index.html" aria-label="Pulkita's Calorie Tracker dashboard">Pulkita's <span>Tracker</span></a>
         <label class="week-switcher"><span>WEEK OF</span><select id="week-select" aria-label="Choose week"></select></label>
       </header>
 
@@ -29,11 +29,11 @@
 
       <section class="overview-grid" aria-label="Weekly overview">
         <article class="metric target-card card reveal">
-          <p>Daily target</p>
+          <p>Daily Target</p>
           <strong id="target-total">0</strong><span>kcal</span>
         </article>
         <article class="metric maintenance-card card reveal">
-          <p>Maintenance / day</p>
+          <p>Maintenance / Day</p>
           <strong id="maintenance-total">0</strong><span>kcal</span>
         </article>
         <article class="metric card reveal weight-card">
@@ -45,28 +45,34 @@
 
       <section class="chart-section reveal" aria-labelledby="chart-heading">
         <div class="section-heading">
-          <div><p class="eyebrow">THE WEEK IN MOTION</p><h2 id="chart-heading">Calorie flow</h2></div>
+          <div><p class="eyebrow">THE WEEK IN MOTION</p><h2 id="chart-heading">Calorie Flow</h2></div>
           <div><button class="text-button" id="chart-help" type="button">About lines</button><button class="text-button" id="open-chart" type="button">Expand <span aria-hidden="true">↗</span></button></div>
         </div>
         <button class="chart-card card" id="chart-trigger" type="button" aria-label="Open expanded weekly calorie chart">
           <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with daily target and maintenance lines"></canvas>
           <span class="chart-hint">Tap chart to explore</span>
         </button>
-        <div class="legend main-chart-legend" aria-label="Calorie chart key"><span><i class="intake"></i>Calories eaten</span><span><i class="target"></i>Daily target</span><span><i class="maintenance"></i>Maintenance calories</span></div>
+        <div class="legend main-chart-legend" aria-label="Calorie chart key"><span><i class="intake"></i>Calories Eaten</span><span><i class="target"></i>Daily Target</span><span><i class="maintenance"></i>Maintenance Calories</span></div>
         <p class="sr-only" id="chart-summary"></p>
+      </section>
+
+      <section class="weight-section reveal" aria-labelledby="weight-heading">
+        <div class="section-heading"><div><p class="eyebrow">YOUR WEIGHT, OVER TIME</p><h2 id="weight-heading">Weight Progress</h2></div><p class="weight-value"><strong id="weight-progress-latest">--</strong><span>kg</span></p></div>
+        <div class="weight-chart-card card"><canvas id="weight-chart" role="img" aria-describedby="weight-progress-change" aria-label="Weekly weight trend chart"></canvas></div>
+        <p class="weight-change" id="weight-progress-change">No Change Recorded</p>
       </section>
 
       <section class="weekly-note card reveal" aria-labelledby="recap-heading">
         <div>
           <p class="eyebrow">WEEKLY RECAP</p>
-          <h2 id="weekly-difference">Finding your rhythm</h2>
+          <h2 id="weekly-difference">Finding Your Rhythm</h2>
           <p id="recap-copy">Add your meals to see your personal weekly story.</p>
         </div>
         <span class="flower" aria-hidden="true">✿</span>
       </section>
 
       <section class="workout-section reveal" aria-labelledby="workout-heading">
-        <div class="section-heading"><div><p class="eyebrow">MOVE WITH YOURSELF</p><h2 id="workout-heading">Workout rhythm</h2><p class="month-label" id="workout-month"></p></div><p class="workout-count" id="workout-count">No workouts logged</p></div>
+        <div class="section-heading"><div><p class="eyebrow">MOVE WITH YOURSELF</p><h2 id="workout-heading">Workout Rhythm</h2><p class="month-label" id="workout-month"></p></div><p class="workout-count" id="workout-count">No workouts logged</p></div>
         <div class="workout-card card"><div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="workout-calendar" id="workout-calendar" role="img" aria-describedby="workout-summary" aria-label="Monthly workout calendar"></div><div class="workout-legend" aria-label="Workout calendar key"><span><i class="workout-done"></i>Done</span><span><i class="workout-rest"></i>Not done</span><span><i class="workout-untracked"></i>Not tracked</span></div><p id="workout-summary" class="sr-only"></p></div>
       </section>
 

@@ -6,10 +6,10 @@ const weekLabel = (start) => {
   const formatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" });
   return `${formatter.format(dates[0])} – ${formatter.format(dates[6])}`;
 };
-let compactChart, fullChart;
+let compactChart, fullChart, weightChart;
 
 function chartOptions(expanded = false) {
-  return { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, interaction: { mode: "index", intersect: false }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: expanded ? 13 : 11, weight: "600" } } }, y: { display: expanded, suggestedMin: 0, grid: { color: "#f0e4e8" }, border: { display: false }, ticks: { color: "#8c7782", callback: value => `${value} kcal` } } } };
+  return { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, interaction: { mode: "index", intersect: false }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: expanded ? 13 : 11, weight: "600" } } }, y: { display: expanded, suggestedMin: 750, grid: { color: "#f0e4e8" }, border: { display: false }, ticks: { color: "#8c7782", callback: value => `${value} kcal` } } } };
 }
 
 function makeChart(canvas, entries, dailyTarget, expanded) {
@@ -17,6 +17,14 @@ function makeChart(canvas, entries, dailyTarget, expanded) {
   if (dailyTarget) datasets.push({ label: "Daily target", data: entries.map(() => dailyTarget), borderColor: "#a28bce", borderWidth: 1.5, borderDash: [5, 5], pointRadius: 0 });
   if (entries.some(entry => typeof entry.maintenance === "number")) datasets.push({ label: "Maintenance", data: entries.map(entry => entry.maintenance), borderColor: "#d5af55", borderWidth: 1.5, borderDash: [3, 6], pointRadius: 0 });
   return new Chart(canvas, { type: "line", data: { labels: entries.map(entry => dayName(entry.date)), datasets }, options: chartOptions(expanded) });
+}
+
+function makeWeightChart(canvas, entries) {
+  const weights = entries.map(entry => typeof entry.weight === "number" ? entry.weight : null);
+  const recorded = weights.filter(value => value !== null);
+  const lowest = recorded.length ? Math.floor(Math.min(...recorded) - .5) : 0;
+  const highest = recorded.length ? Math.ceil(Math.max(...recorded) + .5) : 1;
+  return new Chart(canvas, { type: "line", data: { labels: entries.map(entry => dayName(entry.date)), datasets: [{ label: "Weight", data: weights, borderColor: "#4eaa79", backgroundColor: "rgba(78,170,121,.14)", fill: true, spanGaps: true, borderWidth: 3, pointRadius: 3, pointBackgroundColor: "#fffdfc", pointBorderWidth: 2, tension: .35 }] }, options: { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false, callbacks: { label: context => context.raw === null ? "Not logged" : `${context.raw} kg` } } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: 11, weight: "600" } } }, y: { suggestedMin: lowest, suggestedMax: highest, grid: { color: "#e3eee6" }, border: { display: false }, ticks: { color: "#718679", callback: value => `${value} kg` } } } } });
 }
 
 function monthDatesForWeek(selectedWeek) {
@@ -65,7 +73,10 @@ function populate(entries, allEntries, dailyTarget, selectedWeek, settings) {
   $("#latest-weight").textContent = latest?.weight ?? settings["current weight (kg)"] ?? "—";
   const goalWeight = Number(settings["goal weight (kg)"] || 0);
   const activeWeight = latest?.weight ?? Number(settings["current weight (kg)"] || 0);
+  $("#weight-progress-latest").textContent = latest?.weight ?? settings["current weight (kg)"] ?? "—";
   $("#weight-change").textContent = goalWeight && activeWeight ? `${Math.max(activeWeight - goalWeight, 0).toFixed(1)} kg to your ${goalWeight} kg goal` : latest && starting && latest !== starting ? `${latest.weight - starting.weight <= 0 ? "↓" : "↑"} ${Math.abs(latest.weight - starting.weight).toFixed(1)} kg this week` : "No goal set";
+  const weightMessage = goalWeight && activeWeight ? `${Math.max(activeWeight - goalWeight, 0).toFixed(1)} kg to your ${goalWeight} kg goal` : latest && starting && latest !== starting ? `${latest.weight - starting.weight <= 0 ? "Down" : "Up"} ${Math.abs(latest.weight - starting.weight).toFixed(1)} kg this week` : "No Goal Set";
+  $("#weight-progress-change").textContent = weightMessage;
   if (!loggedEntries.length) {
     $("#weekly-status").textContent = "No calorie entries logged for this week yet.";
     $("#weekly-difference").textContent = "Start wherever you are";
@@ -84,10 +95,13 @@ function populate(entries, allEntries, dailyTarget, selectedWeek, settings) {
   $("#daily-summary").innerHTML = entries.map(entry => `<tr><th scope="row">${dayName(entry.date)}</th><td>${window.isCalorieLogged(entry) ? `${format(window.entryTotal(entry))} kcal` : "Not logged"}</td><td>${dailyTarget ? `${format(dailyTarget)} kcal` : "Not set"}</td></tr>`).join("");
   compactChart?.destroy(); fullChart?.destroy();
   compactChart = makeChart($("#weekly-chart"), entries, dailyTarget, false); fullChart = makeChart($("#expanded-chart"), entries, dailyTarget, true);
+  weightChart?.destroy(); weightChart = makeWeightChart($("#weight-chart"), entries);
   renderWorkoutCalendar(allEntries, selectedWeek);
 }
 
 async function init() {
+  $("#dialog-title").textContent = "Your Calorie Flow";
+  $("#help-title").textContent = "Reading Your Chart";
   try {
     const { entries, dailyTarget, settings } = await window.getTrackerData();
     const weekKeys = window.availableWeekKeys(entries);
