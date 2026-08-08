@@ -52,6 +52,7 @@
           <canvas id="weekly-chart" role="img" aria-label="Weekly calorie intake chart with daily target and maintenance lines"></canvas>
           <span class="chart-hint">Tap chart to explore</span>
         </button>
+        <div class="legend main-chart-legend" aria-label="Calorie chart key"><span><i class="intake"></i>Calories eaten</span><span><i class="target"></i>Daily target</span><span><i class="maintenance"></i>Maintenance calories</span></div>
         <p class="sr-only" id="chart-summary"></p>
       </section>
 
@@ -65,8 +66,8 @@
       </section>
 
       <section class="workout-section reveal" aria-labelledby="workout-heading">
-        <div class="section-heading"><div><p class="eyebrow">MOVE WITH YOURSELF</p><h2 id="workout-heading">Workout rhythm</h2></div><p class="workout-count" id="workout-count">No workouts logged</p></div>
-        <div class="workout-card card"><canvas id="workout-chart" role="img" aria-label="Weekly workout chart"></canvas><p id="workout-summary" class="sr-only"></p></div>
+        <div class="section-heading"><div><p class="eyebrow">MOVE WITH YOURSELF</p><h2 id="workout-heading">Workout rhythm</h2><p class="month-label" id="workout-month"></p></div><p class="workout-count" id="workout-count">No workouts logged</p></div>
+        <div class="workout-card card"><div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="workout-calendar" id="workout-calendar" role="img" aria-describedby="workout-summary" aria-label="Monthly workout calendar"></div><div class="workout-legend" aria-label="Workout calendar key"><span><i class="workout-done"></i>Done</span><span><i class="workout-rest"></i>Not done</span><span><i class="workout-untracked"></i>Not tracked</span></div><p id="workout-summary" class="sr-only"></p></div>
       </section>
 
       <section class="pep-talk card reveal" aria-label="Motivation">

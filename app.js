@@ -6,7 +6,7 @@ const weekLabel = (start) => {
   const formatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" });
   return `${formatter.format(dates[0])} – ${formatter.format(dates[6])}`;
 };
-let compactChart, fullChart, workoutChart;
+let compactChart, fullChart;
 
 function chartOptions(expanded = false) {
   return { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 600 }, interaction: { mode: "index", intersect: false }, plugins: { legend: { display: false }, tooltip: { backgroundColor: "#443640", padding: 12, displayColors: false } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: expanded ? 13 : 11, weight: "600" } } }, y: { display: expanded, suggestedMin: 0, grid: { color: "#f0e4e8" }, border: { display: false }, ticks: { color: "#8c7782", callback: value => `${value} kcal` } } } };
@@ -19,8 +19,30 @@ function makeChart(canvas, entries, dailyTarget, expanded) {
   return new Chart(canvas, { type: "line", data: { labels: entries.map(entry => dayName(entry.date)), datasets }, options: chartOptions(expanded) });
 }
 
-function makeWorkoutChart(entries) {
-  return new Chart($("#workout-chart"), { type: "bar", data: { labels: entries.map(entry => dayName(entry.date)), datasets: [{ label: "Workout", data: entries.map(entry => entry.workout === true ? 1 : entry.workout === false ? 0 : null), backgroundColor: "#a28bce", borderRadius: 9, borderSkipped: false, maxBarThickness: 28 }] }, options: { responsive: true, maintainAspectRatio: false, animation: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 500 }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => context.raw === 1 ? "Workout done" : "Rest day" } } }, scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#8c7782", font: { size: 11, weight: "600" } } }, y: { display: false, min: 0, max: 1, grid: { display: false }, border: { display: false } } } } });
+function monthDatesForWeek(selectedWeek) {
+  const selectedDate = window.dateAtNoon(selectedWeek);
+  const last = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 12);
+  return Array.from({ length: last.getDate() }, (_, index) => window.toIsoDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), index + 1, 12)));
+}
+
+function renderWorkoutCalendar(entries, selectedWeek) {
+  const dates = monthDatesForWeek(selectedWeek);
+  const byDate = new Map(entries.map(entry => [entry.date, entry]));
+  const firstDayOffset = (window.dateAtNoon(dates[0]).getDay() + 6) % 7;
+  const calendar = $("#workout-calendar");
+  const monthName = new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric" }).format(window.dateAtNoon(dates[0]));
+  $("#workout-month").textContent = monthName;
+  const blanks = Array.from({ length: firstDayOffset }, () => '<span class="calendar-blank" aria-hidden="true"></span>').join("");
+  const tracked = dates.map(date => byDate.get(date)).filter(entry => entry?.workout === true || entry?.workout === false);
+  const done = tracked.filter(entry => entry.workout === true).length;
+  calendar.innerHTML = blanks + dates.map(date => {
+    const entry = byDate.get(date);
+    const state = entry?.workout === true ? "done" : entry?.workout === false ? "rest" : "untracked";
+    const label = entry?.workout === true ? "Workout done" : entry?.workout === false ? "Workout not done" : "No workout tracking";
+    return `<span class="calendar-day ${state}" aria-label="${date}: ${label}"><b>${window.dateAtNoon(date).getDate()}</b><i></i></span>`;
+  }).join("");
+  $("#workout-count").textContent = tracked.length ? `${done} of ${tracked.length} days` : "Not logged yet";
+  $("#workout-summary").textContent = `${monthName}: ${done} workouts logged across ${tracked.length} tracked days. Gray dots mark days without workout tracking.`;
 }
 
 function setWeekSelector(weekKeys, selected) {
@@ -29,7 +51,7 @@ function setWeekSelector(weekKeys, selected) {
   select.addEventListener("change", () => { const url = new URL(window.location); url.searchParams.set("week", select.value); window.location.assign(url); });
 }
 
-function populate(entries, dailyTarget, selectedWeek, settings) {
+function populate(entries, allEntries, dailyTarget, selectedWeek, settings) {
   const loggedEntries = entries.filter(window.isCalorieLogged);
   const totalIntake = loggedEntries.reduce((sum, entry) => sum + window.entryTotal(entry), 0);
   const maintenanceValues = entries.map(entry => entry.maintenance).filter(value => typeof value === "number");
@@ -62,11 +84,7 @@ function populate(entries, dailyTarget, selectedWeek, settings) {
   $("#daily-summary").innerHTML = entries.map(entry => `<tr><th scope="row">${dayName(entry.date)}</th><td>${window.isCalorieLogged(entry) ? `${format(window.entryTotal(entry))} kcal` : "Not logged"}</td><td>${dailyTarget ? `${format(dailyTarget)} kcal` : "Not set"}</td></tr>`).join("");
   compactChart?.destroy(); fullChart?.destroy();
   compactChart = makeChart($("#weekly-chart"), entries, dailyTarget, false); fullChart = makeChart($("#expanded-chart"), entries, dailyTarget, true);
-  const workouts = entries.filter(entry => entry.workout === true).length;
-  const workoutEntries = entries.filter(entry => entry.workout === true || entry.workout === false).length;
-  $("#workout-count").textContent = workoutEntries ? `${workouts} of ${workoutEntries} days` : "Not logged yet";
-  $("#workout-summary").textContent = workoutEntries ? `${workouts} workouts were logged across ${workoutEntries} recorded days.` : "No workout entries have been logged this week.";
-  workoutChart?.destroy(); workoutChart = makeWorkoutChart(entries);
+  renderWorkoutCalendar(allEntries, selectedWeek);
 }
 
 async function init() {
@@ -76,7 +94,7 @@ async function init() {
     const queryWeek = new URLSearchParams(window.location.search).get("week");
     const selectedWeek = weekKeys.includes(queryWeek) ? queryWeek : weekKeys[0] || window.weekKey(new Date());
     setWeekSelector(weekKeys.length ? weekKeys : [selectedWeek], selectedWeek);
-    populate(window.entriesForWeek(entries, selectedWeek), dailyTarget, selectedWeek, settings);
+    populate(window.entriesForWeek(entries, selectedWeek), entries, dailyTarget, selectedWeek, settings);
   } catch (error) { console.error(error); $("#weekly-status").textContent = "The tracker could not load right now. Please try again shortly."; }
   $("#motivation-quote").textContent = window.MOTIVATION_QUOTES[Math.floor(Math.random() * window.MOTIVATION_QUOTES.length)];
   const chartDialog = $("#chart-dialog"), helpDialog = $("#help-dialog");

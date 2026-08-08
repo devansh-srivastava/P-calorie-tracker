@@ -12,3 +12,19 @@ dialog { width:min(100% - 22px,720px); max-height:min(90dvh,760px); border:0; bo
 .topbar { gap:10px; } .wordmark span { font-size:.78em; letter-spacing:-.04em; } .week-switcher { border:0; background:var(--lilac-pale); color:#695980; padding:8px 10px 7px; border-radius:12px; font-size:.68rem; font-weight:700; letter-spacing:.07em; } .week-switcher>span { display:block; font-size:.55rem; opacity:.7; margin-bottom:2px; } .week-switcher select { appearance:none; -webkit-appearance:none; min-width:82px; border:0; outline:0; color:#5f4d79; background:transparent; font:700 .73rem/1.2 ui-rounded,system-ui,sans-serif; cursor:pointer; } .week-switcher:focus-within { outline:3px solid rgba(162,139,206,.35); }
 .status-orb { border-radius:37% 63% 65% 35% / 43% 43% 57% 57%; background:rgba(255,255,255,.55); color:#b097da; font-size:1.8rem; box-shadow:none; transform:rotate(-12deg); } .text-button + .text-button { margin-left:10px; } .help-copy { margin-top:23px; color:#66545d; line-height:1.5; font-size:.9rem; } .help-copy p { padding:13px 0; margin:0; border-bottom:1px solid var(--line); } .empty-state { padding:24px; text-align:center; border-radius:18px; color:var(--muted); background:#fffdfc; }
 .target-card { background:var(--lilac-pale); } .target-card p,.target-card>span { color:#75628e; } .target-card strong { color:#5f4d79; } .maintenance-card { background:var(--butter); } .maintenance-card p,.maintenance-card>span { color:#896f37; } .maintenance-card strong { color:#69542c; } .legend .target { border-color:var(--lilac); border-top-style:dashed; } .workout-section { margin-top:29px; } .workout-count { margin:0; color:#78668e; font-size:.75rem; font-weight:800; } .workout-card { height:154px; padding:14px 12px 8px; border-radius:24px; background:#f4effd; }
+
+/* Dashboard chart and monthly workout calendar keys. */
+.main-chart-legend { margin:12px 4px 0; }
+.month-label { margin:4px 0 0; color:var(--muted); font-size:.7rem; font-weight:700; }
+.workout-card { height:auto; padding:15px 14px 14px; }
+.calendar-weekdays,.workout-calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; }
+.calendar-weekdays { margin-bottom:8px; color:#9686aa; font-size:.58rem; font-weight:800; letter-spacing:.02em; }
+.calendar-day { min-height:37px; display:grid; place-items:center; align-content:center; gap:3px; border-radius:10px; color:#6e5a83; font-size:.67rem; font-weight:800; }
+.calendar-day b { line-height:1; }
+.calendar-day i,.workout-legend i { display:block; width:7px; height:7px; border-radius:50%; background:#b4abb9; }
+.calendar-day.done i,.workout-legend .workout-done { background:var(--lilac); }
+.calendar-day.rest i,.workout-legend .workout-rest { background:var(--pink); }
+.calendar-day.untracked i,.workout-legend .workout-untracked { background:#b4abb9; }
+.calendar-blank { min-height:37px; }
+.workout-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:11px; margin-top:12px; color:#7d6d8c; font-size:.63rem; font-weight:700; }
+.workout-legend span { display:flex; align-items:center; gap:4px; }
